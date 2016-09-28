@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<multilateralTournamentsConfiguration>
+	<tournaments>
+		<tournament>
+            <deadline>
+                <value>180</value>
+                <type>ROUND</type>
+            </deadline>
+			<protocolItem hasMediatorProfile="false" hasMediator="false"
+				description="Each agents makes offer, counter-offer, or accepts"
+				classPath="negotiator.protocol.StackedAlternatingOffersProtocol"
+				protocolName="Stacked Alternating Offers Protocol for Multi-Lateral Negotiation (SAOPMN)" />
+			<partyRepItems>
+				<item protocolClassPath="negotiator.protocol.StackedAlternatingOffersProtocol"
+					description="Random party" classPath="negotiator.parties.RandomCounterOfferNegotiationParty" partyName="Random party">
+					<properties />
+				</item>
+				<item protocolClassPath="negotiator.protocol.StackedAlternatingOffersProtocol"
+					description="@: Relentless BestBid" classPath="/home/rohit/0/EclipseWorkspace/GENIUS/multipartyexample/BestBid.class" partyName="BestBid">
+					<properties />
+				</item>
+			</partyRepItems>
+			<partyProfileItems>
+				<item url="file:etc/templates/anac/y2012/RentalHouse/RentalHouse-A-domain_util1.xml" />
+				<item url="file:etc/templates/anac/y2012/RentalHouse/RentalHouse-A-domain_util2.xml" />
+				<item url="file:etc/templates/anac/y2012/RentalHouse/RentalHouse-A-domain_util3.xml" />
+				<item url="file:etc/templates/anac/y2012/RentalHouse/RentalHouse-A-domain_util4.xml" />
+			</partyProfileItems>
+			<numSessions>1</numSessions>
+			<numberOfAgentsPerSession>2</numberOfAgentsPerSession>
+			<repetitionAllowed>false</repetitionAllowed>
+		</tournament>
+	</tournaments>
+</multilateralTournamentsConfiguration>
