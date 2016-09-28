@@ -43,24 +43,14 @@ public class BestBid extends AbstractNegotiationParty {
 
 	}
 
-	private Bid getRandomBid(double target) {
+	private Bid getBestBid() {
 		Bid bid = null;
 		try {
-			// int loops = 0;
-			// do {
-			// 	bid = utilitySpace.getDomain().getRandomBid();
-			// 	loops++;
-			// } while (loops < 100000 && utilitySpace.getUtility(bid) < target);
-			if (bid == null) {
-				System.out.println("Crossed 10,000 loops");
-				bid=utilitySpace.getDomain().getRandomBid();
-				if (maxBid == null) {
-					// this is a computationally expensive operation, therefore
-					// cache result
-					maxBid = utilitySpace.getMaxUtilityBid();
-				}
-				bid = maxBid;
+			// bid = utilitySpace.getDomain().getRandomBid();
+			if (maxBid == null) {
+				maxBid = utilitySpace.getMaxUtilityBid();
 			}
+			bid = maxBid;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -78,19 +68,12 @@ public class BestBid extends AbstractNegotiationParty {
 	 */
 	@Override
 	public Action chooseAction(List<Class<? extends Action>> validActions) {
-		// with 50% chance, counter offer
-		// if we are the first party, also offer.
-		if (opponentBid != null && getUtility(opponentBid) > targetUtility)
-			targetUtility = getUtility(opponentBid);
-		System.out.println("Target Utility (post op): " + targetUtility);
 
-		if (!validActions.contains(Accept.class)) {
-			Bid selfBid = getRandomBid(targetUtility);
-			// if (selfBid != null && getUtility(selfBid) > targetUtility)
-			// 	targetUtility = getUtility(selfBid);
-			// System.out.println("Target Utility (pre bid): " + targetUtility);
+		if (timeline.getTime() < 1.0) {
+			Bid selfBid = getBestBid();
 			return new Offer(selfBid);
-		} else {
+		} 
+		else {
 			return new Accept();
 		}
 	}
