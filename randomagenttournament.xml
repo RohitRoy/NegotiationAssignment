@@ -12,11 +12,27 @@
 				protocolName="Stacked Alternating Offers Protocol for Multi-Lateral Negotiation (SAOPMN)" />
 			<partyRepItems>
 				<item protocolClassPath="negotiator.protocol.StackedAlternatingOffersProtocol"
-					description="Random party" classPath="negotiator.parties.RandomCounterOfferNegotiationParty" partyName="Random party">
+					description="Random party 1" classPath="negotiator.parties.RandomCounterOfferNegotiationParty" partyName="Random party">
 					<properties />
 				</item>
 				<item protocolClassPath="negotiator.protocol.StackedAlternatingOffersProtocol"
-					description="@: Relentless BestBid" classPath="/home/rohit/0/EclipseWorkspace/GENIUS/multipartyexample/BestBid.class" partyName="BestBid">
+					description="@: Relentless BestBid" classPath="/home/deep/workspace/Genius/multipartyexample/BestBid.class" partyName="BestBid">
+					<properties />
+				</item>
+				<item protocolClassPath="negotiator.protocol.StackedAlternatingOffersProtocol"
+					description="Random party 2" classPath="negotiator.parties.RandomCounterOfferNegotiationParty" partyName="Random party">
+					<properties />
+				</item>
+				<item protocolClassPath="negotiator.protocol.StackedAlternatingOffersProtocol"
+					description="Random party 3" classPath="negotiator.parties.RandomCounterOfferNegotiationParty" partyName="Random party">
+					<properties />
+				</item>
+				<item protocolClassPath="negotiator.protocol.StackedAlternatingOffersProtocol"
+					description="Random party 4" classPath="negotiator.parties.RandomCounterOfferNegotiationParty" partyName="Random party">
+					<properties />
+				</item>
+				<item protocolClassPath="negotiator.protocol.StackedAlternatingOffersProtocol"
+					description="Random party 5" classPath="negotiator.parties.RandomCounterOfferNegotiationParty" partyName="Random party">
 					<properties />
 				</item>
 			</partyRepItems>
@@ -25,9 +41,11 @@
 				<item url="file:etc/templates/anac/y2012/RentalHouse/RentalHouse-A-domain_util2.xml" />
 				<item url="file:etc/templates/anac/y2012/RentalHouse/RentalHouse-A-domain_util3.xml" />
 				<item url="file:etc/templates/anac/y2012/RentalHouse/RentalHouse-A-domain_util4.xml" />
+				<item url="file:etc/templates/anac/y2012/RentalHouse/RentalHouse-A-domain_util5.xml" />
+				<item url="file:etc/templates/anac/y2012/RentalHouse/RentalHouse-A-domain_util6.xml" />
 			</partyProfileItems>
 			<numSessions>1</numSessions>
-			<numberOfAgentsPerSession>2</numberOfAgentsPerSession>
+			<numberOfAgentsPerSession>6</numberOfAgentsPerSession>
 			<repetitionAllowed>false</repetitionAllowed>
 		</tournament>
 	</tournaments>
