@@ -85,13 +85,23 @@ public class BestBid_discounted extends AbstractNegotiationParty {
 		else
 		{
 			Bid selfBid = getBestBid();
-			System.out.println("rv: "+reservationValue+" disc: "+reservationValue*disc);
 			if (getUtilityWithDiscount(opponentBid)>=getUtilityWithDiscount(selfBid)) {
 				//System.out.println("utility: "+getUtility(opponentBid)+", discounted utility: "+getUtilityWithDiscount(opponentBid)+", d^currentTime: "+(Math.pow(discountFactor,timeline.getCurrentTime()-2)));
 				return new Accept();
 			} 
 			else {	
-				if(getUtilityWithDiscount(selfBid)>reservationValue*disc)
+				double roundsForCurrUtility=timeline.getTotalTime()*((Math.log(getUtilityWithDiscount(opponentBid))-Math.log(getUtilityWithDiscount(selfBid)))/Math.log(discountFactor)-timeline.getTime());
+				double prob=0.0;
+				if ((timeline.getTotalTime() - timeline.getTime()) > 0.00000001)
+					prob=1-roundsForCurrUtility/(timeline.getTotalTime() - timeline.getCurrentTime());
+				else
+					prob=1;
+				System.out.println(roundsForCurrUtility+" "+prob);
+				if (Math.random()<prob)
+				{
+					return new Accept();
+				}
+				else if(getUtilityWithDiscount(selfBid)>reservationValue*disc)
 				{
 					return new Offer(selfBid);
 				}
