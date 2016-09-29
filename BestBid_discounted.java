@@ -71,6 +71,7 @@ public class BestBid_discounted extends AbstractNegotiationParty {
 	@Override
 	public Action chooseAction(List<Class<? extends Action>> validActions) {
 
+		double disc=Math.pow(discountFactor,timeline.getTime());
 		if(discountFactor==1.0)
 		{
 			if (timeline.getTime() < 1.0) {
@@ -83,26 +84,19 @@ public class BestBid_discounted extends AbstractNegotiationParty {
 		}
 		else
 		{
-
-			System.out.println("currentTime : "+timeline.getCurrentTime());
-			System.out.println("utility: "+getUtility(getBestBid())+", discounted utility: "+getUtilityWithDiscount(getBestBid())+", d^currentTime: "+(Math.pow(discountFactor,timeline.getTime())));
-			System.out.println("utility: "+getUtility(opponentBid)+", discounted utility: "+getUtilityWithDiscount(opponentBid)+", d^currentTime: "+(Math.pow(discountFactor,timeline.getTime())));
-			if (getUtilityWithDiscount(opponentBid)>Math.pow(discountFactor,timeline.getTime()-2)) {
-				//System.out.println("1 utility: "+getUtility(opponentBid)+", discounted utility: "+getUtilityWithDiscount(opponentBid)+", d^currentTime: "+(Math.pow(discountFactor,timeline.getCurrentTime()-2)));
-				//return new Accept();
-				Bid selfBid = getBestBid();
-				return new Offer(selfBid);
+			Bid selfBid = getBestBid();
+			System.out.println("rv: "+reservationValue+" disc: "+reservationValue*disc);
+			if (getUtilityWithDiscount(opponentBid)>=getUtilityWithDiscount(selfBid)) {
+				//System.out.println("utility: "+getUtility(opponentBid)+", discounted utility: "+getUtilityWithDiscount(opponentBid)+", d^currentTime: "+(Math.pow(discountFactor,timeline.getCurrentTime()-2)));
+				return new Accept();
 			} 
-			else {
-				Bid selfBid = getBestBid();
-				if(getUtilityWithDiscount(selfBid)>reservationValue)
+			else {	
+				if(getUtilityWithDiscount(selfBid)>reservationValue*disc)
 				{
-					//System.out.println("2");
 					return new Offer(selfBid);
 				}
 				else
 				{
-					//System.out.println("3");
 					return new EndNegotiation();
 				}
 			}
