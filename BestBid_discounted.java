@@ -26,6 +26,8 @@ public class BestBid_discounted extends AbstractNegotiationParty {
 	Bid maxBid = null;
 	Bid opponentBid = null;
 	double targetUtility = 0.0;
+    double totalTime = 0;
+    double epsilon = 0.00000001;
 
 	@Override
 	public void init(AbstractUtilitySpace utilSpace, Deadline dl,
@@ -39,6 +41,7 @@ public class BestBid_discounted extends AbstractNegotiationParty {
 																		// reservation
 																		// value
 		System.out.println("Reservation Value is " + reservationValue);
+        totalTime = timeline.getTotalTime()
 
 		// if you need to initialize some variables, please initialize them
 		// below
@@ -71,37 +74,44 @@ public class BestBid_discounted extends AbstractNegotiationParty {
 	@Override
 	public Action chooseAction(List<Class<? extends Action>> validActions) {
 
-		double disc=Math.pow(discountFactor,timeline.getTime());
-		if(discountFactor==1.0)
+		double disc = Math.pow(discountFactor,timeline.getTime());
+        double timeNow = timeline.getTime()
+        
+        Bid selfBid = getBestBid();
+        double oppBidDiscUtil = getUtilityWithDiscount(opponentBid) // utility with discount factor for self w.r.t. opponentBid
+        double selfBidDiscUtil = getUtilityWithDiscount(selfBid) // utility with discount factor for self w.r.t. selfBid
+
+		if (discountFactor >= 1-epsilon)
 		{
 			if (timeline.getTime() < 1.0) {
-				Bid selfBid = getBestBid();
 				return new Offer(selfBid);
-			} 
+			}
+            else if (selfBidDiscUtil > reservationValue * disc) {
+                return new EndNegotiation();
+            }
 			else {
 				return new Accept();
 			}
 		}
 		else
 		{
-			Bid selfBid = getBestBid();
-			if (getUtilityWithDiscount(opponentBid)>=getUtilityWithDiscount(selfBid)) {
-				//System.out.println("utility: "+getUtility(opponentBid)+", discounted utility: "+getUtilityWithDiscount(opponentBid)+", d^currentTime: "+(Math.pow(discountFactor,timeline.getCurrentTime()-2)));
+			if (oppBidDiscUtil >= selfBidDiscUtil) {
 				return new Accept();
-			} 
-			else {	
-				double roundsForCurrUtility=timeline.getTotalTime()*((Math.log(getUtilityWithDiscount(opponentBid))-Math.log(getUtilityWithDiscount(selfBid)))/Math.log(discountFactor)-timeline.getTime());
-				double prob=0.0;
-				if ((timeline.getTotalTime() - timeline.getTime()) > 0.00000001)
-					prob=1-roundsForCurrUtility/(timeline.getTotalTime() - timeline.getCurrentTime());
+			}
+			else {
+				double roundsForCurrUtility = totalTime * (Math.log(oppBidDiscUtil)-Math.log(selfBidDiscUtil)) / Math.log(discountFactor);
+				double prob = 0.0;
+				if ((totalTime - timeNow) > epsilon)
+					prob = 1 - roundsForCurrUtility / (totalTime - timeNow);
 				else
-					prob=1;
+					prob = 1;
 				System.out.println(roundsForCurrUtility+" "+prob);
-				if (Math.random()<prob)
+
+				if (Math.random() <= prob*prob)
 				{
 					return new Accept();
 				}
-				else if(getUtilityWithDiscount(selfBid)>reservationValue*disc)
+				else if (selfBidDiscUtil > reservationValue * disc)
 				{
 					return new Offer(selfBid);
 				}
