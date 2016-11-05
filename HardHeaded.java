@@ -79,9 +79,14 @@ public class HardHeaded extends AbstractNegotiationParty {
 	private double P(double t) {
 		double k=0.05;
 		double e=0.12;
-		double F=k+(1-k)*Math.pow(Math.min(t,1.0),1.0/e);
+		if(discountFactor<0.8)
+			e=1.12;
 		double minUtility = Math.max(0.58,reservationValue);//reservationValue;
-		return minUtility + (1.0-F)*(1.0-minUtility);
+		double dynamicMinUtility = -(1.0 - minUtility)*discountFactor+minUtility;
+		dynamicMinUtility = Math.max(dynamicMinUtility,reservationValue);
+		double T=1.0*discountFactor;
+		double F=k+(1-k)*Math.pow(Math.min(t,T)/T,1.0/e);
+		return dynamicMinUtility + (1.0-F)*(1.0-dynamicMinUtility);
 	}
 
 	@Override
