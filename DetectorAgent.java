@@ -62,6 +62,7 @@ public class DetectorAgent extends AbstractNegotiationParty {
 			// bid = utilitySpace.getDomain().getRandomBid();
 			if (maxBid == null) {
 				maxBid = utilitySpace.getMaxUtilityBid();
+				System.out.println(maxBid);
 			}
 			bid = maxBid;
 		} catch (Exception e) {
@@ -129,6 +130,14 @@ public class DetectorAgent extends AbstractNegotiationParty {
         targetUtility = targetUtility * tatRatio;
         
         Bid selfBid = getRandomBid(targetUtility);
+        java.util.ArrayList Iss=selfBid.getIssues();
+        //java.util.Iterator itr=Iss.iterator();
+        //System.out.println(itr.next().getClass());
+        //negotiator.issue.Issue iss=Iss.get(0);
+        System.out.println(Iss.get(0));
+        //System.out.println(iss.getNumber());
+        //if(selfBid!=null)
+        //	System.out.println("Self Bid "+selfBid.getValue(0));
         double selfBidDiscUtil = getUtilityWithDiscount(selfBid); // utility with discount factor for self w.r.t. selfBid
 
         if (timeline.getCurrentTime() < totalTime) {
