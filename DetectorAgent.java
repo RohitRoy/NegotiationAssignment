@@ -29,6 +29,7 @@ public class DetectorAgent extends AbstractNegotiationParty {
 	double targetUtility = 1.0;
     double totalTime = 0;
     double epsilon = 0.00000001;
+    double delta = 0.1;
 
     int issNum = 0;
     java.util.ArrayList<negotiator.issue.Issue> issues = null;
@@ -136,6 +137,31 @@ public class DetectorAgent extends AbstractNegotiationParty {
 		return bid;
 	}
 
+	private double estimateUtility(AgentID agentId, Bid currentBid) {
+		Double[] agentIssWts = issueWts.get(agentId);
+		java.util.Hashtable<Integer, Double[]> agentValWts = valueWts.get(agentId);
+		double utility = 0.0;
+		for (int i = 0; i != issNum; i++){
+			double valWt = 1.0;
+			if (issues.get(i).getType() == discrete) {
+				negotiator.issue.Issue discIss = issues.get(i);
+				negotiator.issue.Value discVal = currentBid.getValue(discIss.getNumber());
+				int index = discIssues.get(issues.get(i)).indexOf(discVal);
+				int numValues = discIssues.get(issues.get(i)).size();
+				Double[] senderValWts = valueWts.get(agentId).get(i);
+				Double maxValWt = 1.0;
+				for (int j = 0; j != numValues; j++){
+					if (senderValWts[j]  > maxValWt){
+						maxValWt = senderValWts[j];
+					}
+				}
+				valWt = (double) senderValWts[index] / maxValWt;
+			}
+			utility += valWt * agentIssWts[i];
+		}
+		return utility;
+	}
+
 	@Override
 	public Action chooseAction(List<Class<? extends Action>> validActions) {
 
@@ -240,14 +266,32 @@ public class DetectorAgent extends AbstractNegotiationParty {
 			valueWts.put(sender, senderValueWts);
 			}
 		// Here you hear other parties' messages
-		senderHistory = agentHistory.get(sender);
+		java.util.ArrayList<Bid> senderHistory = agentHistory.get(sender);
 		senderHistory.add(opponentBid);
+		historyLen = senderHistory.size();
 
-		for (i = 0; i != issNum; i++){
-			if (issue[i].getType() == discrete) {
-				issueNum = issue[i].getNumber();
-				issueVal = opponentBid.getValue(issueNum);
-				
+		if (historyLen > 1) {
+			for (int i = 0; i != issNum; i++){
+				if (issues.get(i).getType() == discrete) {
+					int issueNum = issues.get(i).getNumber();
+					negotiator.issue.ValueDiscrete issueVal = (negotiator.issue.ValueDiscrete) opponentBid.getValue(issueNum);
+					Bid prevBid = senderHistory.get(historyLen-2);
+					if (prevBid.getValue(issueNum) == issueVal) {
+						Double[] senderValWts = valueWts.get(sender).get(i);
+						int index = discIssues.get(issues.get(i)).indexOf(issueVal);
+						senderValWts[index] += 1;
+						
+						Double[] senderIssWts = issueWts.get(sender);
+						senderIssWts[i] += delta;
+						double sum = 0.0;
+						for (int j = 0; j != issNum; j++){
+							sum += senderIssWts[j];
+						}
+						for (int j = 0; j != issNum; j++){
+							senderIssWts[j] /= sum;
+						}
+					}
+				}
 			}
 		}
 	}
