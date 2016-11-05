@@ -126,7 +126,7 @@ public class GroupN extends AbstractNegotiationParty {
 	}
 
 	private double P(double t) {
-		double k=0.05;
+		double k=0.15;
 		double e=0.12;
 		if(discountFactor<0.8){
 			e=1.12;
@@ -150,7 +150,7 @@ public class GroupN extends AbstractNegotiationParty {
 			do {
 				bid = utilitySpace.getDomain().getRandomBid();
 				loops++;
-				if(utilitySpace.getUtility(bid) >= target)
+				if(utilitySpace.getUtility(bid) >= target && utilitySpace.getUtility(bid) <= target+0.3)
 				{
 					currentUtility=0.0;
 					itr = keys.iterator();
@@ -215,7 +215,7 @@ public class GroupN extends AbstractNegotiationParty {
         };
 
         // updateHistory(oppBidDiscUtil);
-        double tatRatio = getTatRatio();
+        // double tatRatio = getTatRatio();
         double pvalue = P(timeline.getTime());
         targetUtility = pvalue;
         
