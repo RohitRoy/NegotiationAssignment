@@ -253,7 +253,7 @@ public class DetectorAgent extends AbstractNegotiationParty {
 				if (issues.get(i).getType() == discrete){
 					negotiator.issue.IssueDiscrete discIssue = (negotiator.issue.IssueDiscrete) issues.get(i);
 					int numValues = discIssue.getNumberOfValues();
-					double initValWt = 1.0 / (double) numValues;
+					double initValWt = 1.0;
 					Double[] discValWts = new Double[numValues];
 					for (int j=0; j != numValues; j++){
 						discValWts[j] = initValWt;
