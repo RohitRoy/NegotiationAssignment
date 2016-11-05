@@ -29,7 +29,17 @@ public class DetectorAgent extends AbstractNegotiationParty {
 	double targetUtility = 1.0;
     double totalTime = 0;
     double epsilon = 0.00000001;
-    java.util.ArrayList issues = null;
+
+    int issNum = 0;
+    java.util.ArrayList<negotiator.issue.Issue> issues = null;
+    java.util.Hashtable<negotiator.issue.IssueDiscrete, java.util.List<negotiator.issue.ValueDiscrete>> discIssues = null;
+
+    java.util.Hashtable<AgentID, Double[]> issueWts = new java.util.Hashtable<AgentID, Double[]>();
+    java.util.Hashtable<AgentID, java.util.Hashtable<Integer, Double[]>> valueWts = new java.util.Hashtable<AgentID, java.util.Hashtable<Integer, Double[]>>();
+
+    java.util.Hashtable<AgentID, java.util.ArrayList<Bid>> agentHistory = new java.util.Hashtable<AgentID, java.util.ArrayList<Bid> >();
+
+    public static negotiator.issue.ISSUETYPE discrete = negotiator.issue.ISSUETYPE.valueOf("DISCRETE");
 
     int historyLen = 3;
 
@@ -52,7 +62,23 @@ public class DetectorAgent extends AbstractNegotiationParty {
 		// if you need to initialize some variables, please initialize them
 		// below
 		issues = utilSpace.getDomain().getIssues();
+		issNum = issues.size();
+		for (int i=0; i != issNum; i++) {
+			if (issues.get(i).getType() == discrete){
+				negotiator.issue.IssueDiscrete discIssue = (negotiator.issue.IssueDiscrete) issues.get(i);
+				java.util.List<negotiator.issue.ValueDiscrete> allValues = discIssue.getValues();
+				discIssues.put(discIssue, allValues);
+			}
+		}
+		
+		System.out.println("IssNum " +  issNum);
 		System.out.println("Issues are " + issues);
+		System.out.println("Issue0 is " + issues.get(0));
+		System.out.println("Issue0 is " + issues.get(0).getType());
+		// if 
+		System.out.println("Issue0 has " + ((negotiator.issue.IssueDiscrete) issues.get(0)).getValues());
+		// java.
+		System.out.println("Issue0 is " + issues.get(0).getNumber());
 
 	}
 
@@ -130,14 +156,15 @@ public class DetectorAgent extends AbstractNegotiationParty {
         targetUtility = targetUtility * tatRatio;
         
         Bid selfBid = getRandomBid(targetUtility);
-        java.util.ArrayList Iss=selfBid.getIssues();
-        //java.util.Iterator itr=Iss.iterator();
+        java.util.ArrayList<negotiator.issue.Issue> iss = selfBid.getIssues();
+        //java.util.Iterator itr=iss.iterator();
         //System.out.println(itr.next().getClass());
-        //negotiator.issue.Issue iss=Iss.get(0);
-        System.out.println(Iss.get(0));
-        //System.out.println(iss.getNumber());
-        //if(selfBid!=null)
-        //	System.out.println("Self Bid "+selfBid.getValue(0));
+        negotiator.issue.Issue iss0 = iss.get(0);
+        // System.out.println(iss0.get(0));
+        System.out.println("Issue0 Number is : " + iss0.getNumber());
+        int iss0num = iss0.getNumber();
+        if(selfBid!=null)
+        	System.out.println("Self Bid " + selfBid.getValue(iss0num));
         double selfBidDiscUtil = getUtilityWithDiscount(selfBid); // utility with discount factor for self w.r.t. selfBid
 
         if (timeline.getCurrentTime() < totalTime) {
@@ -187,8 +214,42 @@ public class DetectorAgent extends AbstractNegotiationParty {
 		opponentBid = Action.getBidFromAction(action);
 		System.out.println("sender is " + sender);
 		System.out.println("bid is " + opponentBid);
+		if (sender == null) {
+			return;
+		}
 
+		if (!issueWts.keySet().contains(sender)) {
+			Double[] senderIssueWts = new Double[issNum];
+			java.util.Hashtable<Integer, Double[]> senderValueWts = new java.util.Hashtable<Integer, Double[]>();
+			double initWt = 1.0 / (double) issNum;
+			for (int i=0; i != issNum ; i++){
+				senderIssueWts[i] = initWt;
+				if (issues.get(i).getType() == discrete){
+					negotiator.issue.IssueDiscrete discIssue = (negotiator.issue.IssueDiscrete) issues.get(i);
+					int numValues = discIssue.getNumberOfValues();
+					double initValWt = 1.0 / (double) numValues;
+					Double[] discValWts = new Double[numValues];
+					for (int j=0; j != numValues; j++){
+						discValWts[j] = initValWt;
+						}
+					senderValueWts.put((Integer)i, discValWts);
+					
+					}
+				}
+			issueWts.put(sender, senderIssueWts);
+			valueWts.put(sender, senderValueWts);
+			}
 		// Here you hear other parties' messages
+		senderHistory = agentHistory.get(sender);
+		senderHistory.add(opponentBid);
+
+		for (i = 0; i != issNum; i++){
+			if (issue[i].getType() == discrete) {
+				issueNum = issue[i].getNumber();
+				issueVal = opponentBid.getValue(issueNum);
+				
+			}
+		}
 	}
 
 	@Override
